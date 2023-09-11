@@ -28,8 +28,8 @@ phases:
       - |
         outfile=$(mktemp)  # Create a temporary file
         aws lambda invoke --function-name $IMAGE_UPDATE_LAMBDA --payload '{
-          "image_tag": "'"$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:latest"'",
-          "lambda_function_name": "'"$LAMBDA_FUNCTION_TO_DEPLOY"'"
+          "image_tag": "841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:latest",
+          "lambda_function_name": "MATH_LAMBDA"
         }' $outfile
         cat $outfile > /dev/null  # Discard the output
       - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
