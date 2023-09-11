@@ -13,23 +13,24 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - aws --region $AWS_DEFAULT_REGION ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - aws --region $AWS_REGION ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t new_docker_image .
-      - docker tag new_docker_image:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:latest
+      - docker tag new_docker_image:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest
   post_build:
     commands:
       - echo Pushing the Docker image to Amazon ECR...
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:latest
-      - echo Invoking the Image Update Lambda function...
-      - >
-        aws lambda invoke --function-name IMAGE_UPDATE_LAMBDA --payload '{
-          "image_tag": "841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:latest",
-          "lambda_function_name": "MATH_LAMBDA"
-        }' output.json
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest
+      - echo Creating the JSON payload...
+      - payload="{\"image_tag\":\"$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest\",\"lambda_function_name\":\"$LAMBDA_FUNCTION_TO_DEPLOY\"}"
+      - echo JSON payload: $payload
+      - encoded_payload=$(echo -n $payload | openssl base64)
+      - echo Base64-encoded payload: $encoded_payload
+      - echo Invoking the Image Update Lambda function with base64-encoded payload...
+      - aws lambda invoke --function-name IMAGE_UPDATE_LAMBDA --payload "{\"base64Payload\":\"$encoded_payload\"}" output.json
       - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
 artifacts:
   files: output.json
