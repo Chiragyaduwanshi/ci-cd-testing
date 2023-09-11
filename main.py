@@ -1,5 +1,5 @@
 # This is a sample Python script.
-#yes
+#
 
 
 def handler(handler_event):
