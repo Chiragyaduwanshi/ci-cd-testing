@@ -1,23 +1,29 @@
-version: 0.2
+ersion: 0.2
+
 
 phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - $(aws ecr get-login --no-include-email --region ap-south-1)
-
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - REPOSITORY_URI=841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
     commands:
+      - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t 841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:latest .
-      - docker tag 841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:latest 841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION
-
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
-      - echo Pushing the Docker image to Amazon ECR...
-      - docker push 841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:latest
-      - docker push 841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION
-
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"python_docker_app","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json 
 artifacts:
-  files: docker-image.json
-
+    files: imagedefinitions.json
