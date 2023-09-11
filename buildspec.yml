@@ -4,33 +4,30 @@ env:
   variables:
     AWS_ACCOUNT_ID: "841042906610"
     AWS_REGION: "ap-south-1"
-    REPOSITORY_URI: "841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo"
+    REPO_NAME: "cd-image-repo"
     IMAGE_UPDATE_LAMBDA: "IMAGE_UPDATE_LAMBDA"
     LAMBDA_FUNCTION_TO_DEPLOY: "MATH_LAMBDA"
-
 
 phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
-      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+      - aws --region $AWS_DEFAULT_REGION ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - docker build -t new_docker_image .
+      - docker tag new_docker_image:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:latest
   post_build:
     commands:
       - echo Pushing the Docker image to Amazon ECR...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:latest
       - echo Invoking the Image Update Lambda function...
-      - IMAGE_URI = $REPOSITORY_URI:$IMAGE_TAG
-      - >
+      - |
         aws lambda invoke --function-name $IMAGE_UPDATE_LAMBDA --payload '{
-          "image_tag": "'"$REPOSITORY_URI:$IMAGE_TAG"'",
+          "image_tag": "'"$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:latest"'",
           "lambda_function_name": "'"$LAMBDA_FUNCTION_TO_DEPLOY"'"
-        }' > /dev/null
+        }'
       - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
