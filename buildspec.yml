@@ -29,5 +29,5 @@ phases:
         aws lambda invoke --function-name $IMAGE_UPDATE_LAMBDA --payload '{
           "image_tag": "'"$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:latest"'",
           "lambda_function_name": "'"$LAMBDA_FUNCTION_TO_DEPLOY"'"
-        }'
+        }' > /dev/null
       - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
