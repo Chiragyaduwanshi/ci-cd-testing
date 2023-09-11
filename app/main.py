@@ -6,7 +6,12 @@ def handler(handler_event):
     # Use a breakpoint in the code line below to debug your script.
     a = handler_event['a']
     b = handler_event['b']
-    print(a + b)
+    response = {
+        "statusCode": 200,
+        "body": f"addition : {a} + {b} = {a+b}"
+    }
+    print('a + b = ', a+b)
+    return response
 
 
 # Press the green button in the gutter to run the script.

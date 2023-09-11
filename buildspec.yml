@@ -1,14 +1,20 @@
 version: 0.2
 
+env:
+  variables:
+    AWS_ACCOUNT_ID: "841042906610"
+    AWS_REGION: "ap-south-1"
+    REPOSITORY_URI: "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/cd-image-repo"
+    IMAGE_UPDATE_LAMBDA: "IMAGE_UPDATE_LAMBDA"
+    LAMBDA_FUNCTION_TO_DEPLOY: "MATH_LAMBDA"
+
 
 phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - REPOSITORY_URI=841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo
-      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
     commands:
@@ -18,12 +24,8 @@ phases:
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI:latest
+      - echo Pushing the Docker image to Amazon ECR...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
-      - printf '[{"name":"python_docker_app","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - cat imagedefinitions.json 
-artifacts:
-    files: imagedefinitions.json
+      - echo Invoking the Image Update Lambda function...
+      - aws lambda invoke --function-name $IMAGE_UPDATE_LAMBDA --payload '{"image_tag": "$REPOSITORY_URI:$IMAGE_TAG", "lambda_function_name": "$LAMBDA_FUNCTION_TO_DEPLOY"}' /dev/null
+      - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
