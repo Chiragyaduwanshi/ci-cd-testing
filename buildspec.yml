@@ -4,7 +4,7 @@ env:
   variables:
     AWS_ACCOUNT_ID: "841042906610"
     AWS_REGION: "ap-south-1"
-    REPOSITORY_URI: "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/cd-image-repo"
+    REPOSITORY_URI: "841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo"
     IMAGE_UPDATE_LAMBDA: "IMAGE_UPDATE_LAMBDA"
     LAMBDA_FUNCTION_TO_DEPLOY: "MATH_LAMBDA"
 
@@ -14,7 +14,7 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
     commands:
@@ -30,7 +30,7 @@ phases:
       - IMAGE_URI = $REPOSITORY_URI:$IMAGE_TAG
       - >
         aws lambda invoke --function-name $IMAGE_UPDATE_LAMBDA --payload '{
-          "image_uri": "'"$REPOSITORY_URI:$IMAGE_TAG"'",
-          "upload_function_name": "'"$LAMBDA_FUNCTION_TO_DEPLOY"'"
+          "image_tag": "'"$REPOSITORY_URI:$IMAGE_TAG"'",
+          "lambda_function_name": "'"$LAMBDA_FUNCTION_TO_DEPLOY"'"
         }' > /dev/null
       - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
