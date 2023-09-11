@@ -1,5 +1,5 @@
 # This is a sample Python script.
-#
+# Granted Lambda access in sixteenth commit
 
 
 def handler(handler_event):
