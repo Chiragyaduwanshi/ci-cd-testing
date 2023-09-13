@@ -30,7 +30,7 @@ phases:
         > --invocation-type Event \
         > --cli-binary-format raw-in-base64-out \
         > --payload '{ "image_tag": "841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:latest" , "lambda_function_name":"TEST_LAMBDA" }' \
-        response.json
+            response.json
       - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
 artifacts:
   files: response.json
