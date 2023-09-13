@@ -6,7 +6,7 @@ env:
     AWS_REGION: "ap-south-1"
     REPO_NAME: "cd-image-repo"
     IMAGE_UPDATE_LAMBDA: "IMAGE_UPDATE_LAMBDA"
-    LAMBDA_FUNCTION_TO_DEPLOY: "MATH_LAMBDA"
+    LAMBDA_FUNCTION_TO_DEPLOY: "TEST_LAMBDA"
 
 phases:
   pre_build:
@@ -24,13 +24,9 @@ phases:
     commands:
       - echo Pushing the Docker image to Amazon ECR...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest
-      - echo Creating the JSON payload...
-      - payload="{\"image_tag\":\"$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest\",\"lambda_function_name\":\"$LAMBDA_FUNCTION_TO_DEPLOY\"}"
-      - echo JSON payload: $payload
-      - encoded_payload=$(echo -n $payload | openssl base64)
-      - echo Base64-encoded payload: $encoded_payload
-      - echo Invoking the Image Update Lambda function with base64-encoded payload...
-      - aws lambda invoke --function-name IMAGE_UPDATE_LAMBDA --payload "{\"base64Payload\":\"$encoded_payload\"}" output.json
+      - echo Invoking the Image Update Lambda function...
+      - aws lambda invoke --function-name IMAGE_UPDATE_LAMBDA --invocation-type Event --cli-binary-format raw-in-base64-out --payload '{ "image_tag": "841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:latest" , "lambda_function_name":"TEST_LAMBDA" }' response.json
+#      - aws lambda invoke --function-name IMAGE_UPDATE_LAMBDA --payload "{\"image_tag\":\"$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest\",\"lambda_function_name\":\"$LAMBDA_FUNCTION_TO_DEPLOY\"}" output.json
       - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
 artifacts:
-  files: output.json
+  files: response.json
