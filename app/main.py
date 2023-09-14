@@ -2,10 +2,10 @@
 # Granted Lambda access in 32' commit
 
 
-def handler(handler_event):
+def lambda_handler(event, context):
     # Use a breakpoint in the code line below to debug your script.
-    a = handler_event['a']
-    b = handler_event['b']
+    a = event['a']
+    b = event['b']
     response = {
         "statusCode": 200,
         "body": f"addition : {a} + {b} = {a+b}"
@@ -13,13 +13,3 @@ def handler(handler_event):
     print('a + b = ', a+b)
     return response
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    event = {
-        'a': 2,
-        'b': 3
-    }
-    handler(event)
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
