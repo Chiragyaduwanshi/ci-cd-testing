@@ -5,7 +5,6 @@ env:
     AWS_ACCOUNT_ID: "841042906610"
     AWS_REGION: "ap-south-1"
     REPO_NAME: "cd-image-repo"
-    IMAGE_UPDATE_LAMBDA: "IMAGE_UPDATE_LAMBDA"
     LAMBDA_FUNCTION_TO_DEPLOY: "TEST_LAMBDA"
 
 phases:
@@ -25,12 +24,7 @@ phases:
       - echo Pushing the Docker image to Amazon ECR...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest
       - echo Invoking the Image Update Lambda function...
-      - aws lambda invoke \
-        > --function-name IMAGE_UPDATE_LAMBDA \
-        > --invocation-type Event \
-        > --cli-binary-format raw-in-base64-out \
-        > --payload '{ "image_tag": "841042906610.dkr.ecr.ap-south-1.amazonaws.com/cd-image-repo:latest" , "lambda_function_name":"TEST_LAMBDA" }' \
-            response.json
+      - aws lambda update-function-code \
+        --function-name  $LAMBDA_FUNCTION_TO_DEPLOY \
+        --image-uri $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest
       - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
-artifacts:
-  files: response.json
