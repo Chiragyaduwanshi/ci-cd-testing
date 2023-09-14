@@ -17,4 +17,4 @@ EXPOSE 80
 ENV NAME World
 
 # Run your Python script when the container launches
-CMD ["python", "main.py"]
+CMD [ "main.lambda_handler" ]
