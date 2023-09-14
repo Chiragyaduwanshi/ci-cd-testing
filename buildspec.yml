@@ -25,6 +25,6 @@ phases:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest
       - echo Invoking the Image Update Lambda function...
       - aws lambda update-function-code \
-        --function-name TEST_LAMBDA \
+        --function-name  TEST_LAMBDA \
         --image-uri $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:latest
       - echo New image deployed on $LAMBDA_FUNCTION_TO_DEPLOY successfully...
