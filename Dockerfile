@@ -1,20 +1,8 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# Use the official AWS Lambda Python runtime as a parent image
+FROM public.ecr.aws/lambda/python:3.8
 
-# Set the working directory in the container
-WORKDIR /app
+# Copy your Lambda function code into the image
+COPY main.py /var/task/
 
-# Copy the current directory contents into the container at /app
-COPY app /app
-
-# Install any needed packages specified in requirements.txt
-#RUN pip install --trusted-host pypi.python.org -r requirements.txt
-
-# Make port 80 available to the world outside this container
-EXPOSE 80
-
-# Define environment variable
-ENV NAME World
-
-# Run your Python script when the container launches
-CMD [ "main.lambda_handler" ]
+# Define the Lambda function's entry point
+CMD ["main.lambda_handler"]
