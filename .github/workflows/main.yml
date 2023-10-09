@@ -1,0 +1,44 @@
+name: Build Docker Image and Update Lambda
+
+on:
+  push:
+    branches:
+      - your-branch-name
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCOUNT_ID: "841042906610"  
+      AWS_REGION: "ap-south-1"
+      REPO_NAME: "cd-image-repo"
+      LAMBDA_FUNCTION_TO_DEPLOY: "TEST_LAMBDA"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Amazon ECR
+        run: |
+          echo Logging in to Amazon ECR...
+          aws --version
+          aws --region $AWS_REGION ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.${AWS_REGION}.amazonaws.com
+
+      - name: Build Docker Image
+        run: |
+          echo Build started on $(date)
+          echo Building the Docker image...
+          docker build -t new_docker_image .
+          docker tag new_docker_image:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}:latest
+
+      - name: Push Docker Image to Amazon ECR
+        run: |
+          echo Pushing the Docker image to Amazon ECR...
+          docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}:latest
+
+      - name: Update AWS Lambda function
+        run: |
+          echo Invoking the Image Update Lambda function...
+          aws lambda update-function-code --function-name ${LAMBDA_FUNCTION_TO_DEPLOY} --image-uri ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}:latest
+          echo New image deployed on ${LAMBDA_FUNCTION_TO_DEPLOY} successfully...
