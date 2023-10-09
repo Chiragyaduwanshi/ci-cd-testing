@@ -3,7 +3,7 @@ name: Build Docker Image and Update Lambda
 on:
   push:
     branches:
-      - your-branch-name
+      - main
 
 jobs:
   build-and-deploy:
