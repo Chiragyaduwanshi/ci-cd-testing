@@ -1,5 +1,5 @@
 
-#Trail Number 03
+#Trail Number 06
 def lambda_handler(event, context):
     try:
         # Extract 'a' and 'b' from the event dictionary
@@ -7,7 +7,7 @@ def lambda_handler(event, context):
         b = event['b']
 
         # Perform the addition
-        result = a * b
+        result = a + b
 
         # Create a successful response dictionary
         response = {
