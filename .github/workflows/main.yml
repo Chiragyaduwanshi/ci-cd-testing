@@ -27,12 +27,12 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t dev-docker-image .
-          docker tag dev-docker-image:latest ${{ steps.login-ecr.outputs.registry }}/ci-cd-testing:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/ci-cd-testing:latest
+          docker tag dev-docker-image:latest ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
 
       - name: Update AWS Lambda function
         run: |
           aws lambda update-function-code \
             --function-name TEST_LAMBDA \
-            --image-uri ${{ steps.login-ecr.outputs.registry }}/ci-cd-testing:latest
+            --image-uri ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
 
