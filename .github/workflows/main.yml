@@ -1,9 +1,8 @@
 name: Build Docker Image and Update Lambda
 
 on:
-  push:
-    branches:
-      - main
+  repository_dispatch:
+    types: [custom-trigger]
 
 jobs:
   build-and-deploy:
