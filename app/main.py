@@ -2,14 +2,11 @@
 #Trail Number 06
 def lambda_handler(event, context):
     try:
-        # Extract 'a' and 'b' from the event dictionary
         a = event['a']
         b = event['b']
 
-        # Perform the addition
         result = a * b
 
-        # Create a successful response dictionary
         response = {
             "statusCode": 200,
             "body": f"addition: {a} + {b} = {result}"
