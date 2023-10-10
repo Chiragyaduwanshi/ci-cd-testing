@@ -2,7 +2,6 @@ name: Build Docker Image and Update Lambda
 
 on:
   repository_dispatch:
-    types: [custom-trigger]
 
 jobs:
   build-and-deploy:
