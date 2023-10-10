@@ -7,7 +7,7 @@ def lambda_handler(event, context):
         b = event['b']
 
         # Perform the addition
-        result = a * b
+        result = a + b
 
         # Create a successful response dictionary
         response = {
