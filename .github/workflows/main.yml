@@ -1,4 +1,4 @@
-name: Build Docker Image and Update Lambda
+name: main
 
 on:
   repository_dispatch:
