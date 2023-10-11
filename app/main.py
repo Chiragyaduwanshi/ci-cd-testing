@@ -5,11 +5,11 @@ def lambda_handler(event, context):
         a = event['a']
         b = event['b']
 
-        result = a * b
+        result = a + b
 
         response = {
             "statusCode": 200,
-            "body": f"multiplication: {a} * {b} = {result}"
+            "body": f"addition: {a} + {b} = {result}"
         }
 
         print('a * b =', result)
