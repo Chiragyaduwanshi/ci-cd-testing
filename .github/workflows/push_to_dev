@@ -1,0 +1,60 @@
+name: push_to_dev
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+      
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        
+      - name: Build and push Docker image
+        run: |
+          docker build -t dev-docker-image .
+          docker tag dev-docker-image:latest ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+
+      - name: Update AWS Lambda function
+        run: |
+          aws lambda update-function-code \
+            --function-name TEST_LAMBDA \
+            --image-uri ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+
+      - name: Invoke TEST_LAMBDA
+        run: |
+          aws lambda invoke --function-name ai-doc-parser-testing \
+            --invocation-type RequestResponse \
+            --log-type Tail \
+            --payload '{}' response.json
+          cat response.json
+
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install jq -y
+
+      - name: Check Test Score
+        run: |
+          score=$(cat response.json | jq -r '.score')
+          if [[ "$score" -ge 98 ]]; then
+            echo "Test score is greater than or equal to 98."
+          else
+            echo "Test score is below 98. Failing the workflow."
+            exit 1
+          fi
