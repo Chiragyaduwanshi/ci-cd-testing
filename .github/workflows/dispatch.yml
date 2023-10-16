@@ -10,11 +10,17 @@ jobs:
     steps:
         
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1
+        run: |
+          pip install --upgrade awscli
+          aws configure --profile qa set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure --profile qa set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure --profile qa set region $AWS_REGION
+          aws configure --profile qa set output $AWS_DEFAULT_OUTPUT
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-south-1
+          AWS_DEFAULT_OUTPUT: json
       
         
       - name: Initiate testing phase
