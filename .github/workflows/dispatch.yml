@@ -41,7 +41,7 @@ jobs:
 
       - name: Evaluate the Test Score
         run: |
-          result=$(jq -r .answer #test_response)
+          result=$(jq -r .answer $test_response)
           threshold=6.00
           echo "Threshold: $threshold"
           echo "Result: $result"
