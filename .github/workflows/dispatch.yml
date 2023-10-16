@@ -30,12 +30,18 @@ jobs:
             --query 'Payload' \
             --cli-binary-format raw-in-base64-out \
             --output json /dev/stdout)
+          echo "$test_response" > output.json
+        working-directory: ${{ github.workspace }}
 
-          echo "Lambda Response: $test_response"
+      - name: Display JSON Output
+        run: |
+          # Display the captured JSON output
+          cat output.json
+        working-directory: ${{ github.workspace }}
 
       - name: Evaluate the Test Score
         run: |
-          result=$(cat $test_response | jq '.body')
+          result=$(jq -r .answer output.json)
           threshold=6.00
           echo "Threshold: $threshold"
           echo "Result: $result"
