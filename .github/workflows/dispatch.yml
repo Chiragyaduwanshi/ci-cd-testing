@@ -19,13 +19,13 @@ jobs:
         
       - name: Initiate testing phase
         run: |
-          payload='{
+          inp='{
             "a": 2,
             "b": 3
           }'
           test_response=$(aws lambda invoke \
             --function-name TEST_LAMBDA \
-            --payload "$payload" \
+            --payload "$inp" \
             --query 'Payload' \
             --output json /dev/stdout)
 
