@@ -35,13 +35,7 @@ jobs:
             --cli-binary-format raw-in-base64-out \
             --query 'Payload' \
             output.json
-        working-directory: ${{ github.workspace }}
-
-      - name: Display JSON Output
-        run: |
-          # Display the contents of the output.json file
           cat output.json
-        working-directory: ${{ github.workspace }}
 
       - name: Evaluate the Test Score
         run: |
