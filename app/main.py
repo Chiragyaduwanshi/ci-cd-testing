@@ -1,23 +1,24 @@
-
-
 def lambda_handler(event, context):
     try:
+        # Extract 'a' and 'b' from the event dictionary
         a = event['a']
         b = event['b']
 
-        result = a * b
+        # Perform the addition
+        result = a + b
 
+        # Create a successful response dictionary
         response = {
             "statusCode": 200,
-            "body": f"multiplication: {a} * {b} = {result}",
-            "answer": result
+            "body": f"subtraction: {b} - {a} = {result}"
         }
 
-        print('a * b =', result)
+        # Print the result for debugging (visible in CloudWatch Logs)
+        print('a + b =', result)
 
         return response
     except KeyError as e:
-
+        # Handle missing 'a' or 'b' in the event
         error_message = f"Missing key in event: {e}"
         print(error_message)
         return {
@@ -25,7 +26,7 @@ def lambda_handler(event, context):
             "body": error_message
         }
     except Exception as e:
-
+        # Handle other exceptions
         error_message = f"An error occurred: {e}"
         print(error_message)
         return {
