@@ -1,20 +1,44 @@
-name: Custom Workflow Dispatch
+name: main
 
 on:
-  workflow_dispatch:
-    inputs:
-      trigger-main-workflow:
-        description: 'Trigger the main workflow'
-        required: true
+  workflow_dispatch
 
 jobs:
-  trigger-main-workflow:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Trigger Main Workflow
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+      
+        
+      - name: Initiate testing phase
         run: |
-          echo "Triggering the main workflow..."
-          curl -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/Chiragyaduwanshi/ci-cd-testing/actions/workflows/main.yml/dispatches \
-            -d '{"ref": "main"}'
+          payload='{
+            "a": 2,
+            "b": 3
+          }'
+          test_response=$(aws lambda invoke \
+            --function-name TEST_LAMBDA \
+            --payload "$payload" \
+            --profile qa \
+            --query 'Payload' \
+            --output json)
+
+          echo "Lambda Response: $test_response"
+
+      - name: Evaluate the Test Score
+        run: |
+          result=$(echo "$test_response" | jq -r '.auto_rate')
+          threshold=6.00
+          if [ "$(echo "$result >= $threshold" | bc)" -eq 1 ]; then
+            echo "Test score is greater than or equal to $threshold. Workflow continues."
+          else
+            echo "Test score is below $threshold. Workflow will be terminated."
+            exit 1 
+          fi
