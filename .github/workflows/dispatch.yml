@@ -8,6 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check Manual Switch
+        id: check_manual_switch
+        run: |
+          manual_switch=$(cat workflow_trigger.txt)
+          
+          if [ "$manual_switch" = "continue" ]; then
+            echo "Deployment is not required. Exiting workflow "
+            exit 0
+          else
+            echo "Proceeding with deployment..."
+          }
         
       - name: Configure AWS credentials
         run: |
