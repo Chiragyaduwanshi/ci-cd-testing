@@ -16,7 +16,7 @@ jobs:
         run: |
           manual_switch=$(cat .github/workflow_trigger.txt)
           
-          if [ "$manual_switch" = "continue" ]; then
+          if [ "$manual_switch" != "continue" ]; then
             echo "Deployment is not required. Exiting workflow "
             exit 0
           else
