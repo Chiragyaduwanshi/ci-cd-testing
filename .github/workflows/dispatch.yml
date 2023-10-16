@@ -21,7 +21,7 @@ jobs:
             exit 0
           else
             echo "Proceeding with deployment..."
-          }
+          fi
         
       - name: Configure AWS credentials
         run: |
