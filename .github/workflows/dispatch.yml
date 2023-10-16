@@ -35,7 +35,7 @@ jobs:
 
       - name: Evaluate the Test Score
         run: |
-          result=$(cat .$test_response | jq '.composer_require')
+          result=$(cat $test_response | jq '.answer')
           threshold=6.00
           echo "Threshold: $threshold"
           echo "Result: $result"
