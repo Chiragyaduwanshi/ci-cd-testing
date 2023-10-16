@@ -35,7 +35,7 @@ jobs:
 
       - name: Evaluate the Test Score
         run: |
-          result=$(echo "$test_response" | jq -r '.auto_rate')
+          result=$(echo "$test_response" | jq -r '.answer')
           threshold=6.00
           if [ "$(echo "$result >= $threshold" | bc)" -eq 1 ]; then
             echo "Test score is greater than or equal to $threshold. Workflow continues."
