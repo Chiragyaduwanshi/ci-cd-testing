@@ -33,6 +33,12 @@ jobs:
           echo "$test_response" > output.json
         working-directory: ${{ github.workspace }}
 
+      - name: Display JSON Output
+        run: |
+          # Display the contents of the output.json file
+          cat output.json
+        working-directory: ${{ github.workspace }}
+
       - name: Evaluate the Test Score
         run: |
           result=$(jq -r .answer output.json)
