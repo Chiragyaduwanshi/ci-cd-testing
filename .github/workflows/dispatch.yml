@@ -35,8 +35,6 @@ jobs:
             --cli-binary-format raw-in-base64-out \
             --query 'Payload' \
             output.json
-
-      - name: Displaying test results
           cat output.json
 
       - name: Evaluate the Test Score
