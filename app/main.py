@@ -10,7 +10,7 @@ def lambda_handler(event, context):
         response = {
             "statusCode": 200,
             "body": f"multiplication: {a} * {b} = {result}",
-            "answer": result
+            "answer": f"{result}.00"
         }
 
         print('a * b =', result)
