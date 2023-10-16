@@ -25,7 +25,7 @@ jobs:
       - name: Initiate testing phase
         run: |
           inp='{
-            "a": 2,
+            "a": 1,
             "b": 3
           }'
           echo "Payload: $inp"
