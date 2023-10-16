@@ -11,7 +11,7 @@ jobs:
       - name: Check Manual Switch
         id: check_manual_switch
         run: |
-          manual_switch=$(cat workflow_trigger.txt)
+          manual_switch=$(cat .github/workflow_trigger.txt)
           
           if [ "$manual_switch" = "continue" ]; then
             echo "Deployment is not required. Exiting workflow "
