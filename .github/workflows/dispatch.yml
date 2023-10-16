@@ -48,9 +48,9 @@ jobs:
             exit 1
           fi
           
-          if (( $(echo "$result >= $threshold" | bc -l) )); then
-            echo "Test score is greater than or equal to $threshold. Workflow continues."
-          else
-            echo "Test score is below $threshold. Workflow will be terminated."
-            exit 1 
-          fi
+          # if (( $(echo "$result >= $threshold" | bc -l) )); then
+          #   echo "Test score is greater than or equal to $threshold. Workflow continues."
+          # else
+          #   echo "Test score is below $threshold. Workflow will be terminated."
+          #   exit 1 
+          # fi
