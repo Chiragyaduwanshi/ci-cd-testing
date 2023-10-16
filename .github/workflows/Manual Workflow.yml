@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       branch_name:
-        description: 'Branch name to checkout'
+        description: 'Branch name to deploy'
         required: true
 
 jobs:
