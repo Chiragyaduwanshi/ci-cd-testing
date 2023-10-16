@@ -29,13 +29,11 @@ jobs:
             "b": 3
           }'
           echo "Payload: $inp"
-          test_response=$(aws lambda invoke \
+          aws lambda invoke \
             --function-name TEST_LAMBDA \
             --payload "$inp" \
             --query 'Payload' \
-            --cli-binary-format raw-in-base64-out \
-            --output json /dev/stdout)
-          echo "$test_response" > output.json
+            output.json
         working-directory: ${{ github.workspace }}
 
       - name: Display JSON Output
