@@ -28,6 +28,7 @@ jobs:
             --function-name TEST_LAMBDA \
             --payload "$inp" \
             --query 'Payload' \
+            --cli-binary-format raw-in-base64-out \
             --output json /dev/stdout)
 
           echo "Lambda Response: $test_response"
