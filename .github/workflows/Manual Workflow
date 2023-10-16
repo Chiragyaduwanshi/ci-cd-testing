@@ -1,0 +1,24 @@
+name: Manual Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      param1:
+        description: 'Input parameter 1'
+        required: true
+      param2:
+        description: 'Input parameter 2'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Display Input Parameters
+        run: |
+          echo "Input Parameter 1: ${{ github.event.inputs.param1 }}"
+          echo "Input Parameter 2: ${{ github.event.inputs.param2 }}"
