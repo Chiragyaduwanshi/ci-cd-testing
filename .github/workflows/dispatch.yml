@@ -37,7 +37,7 @@ jobs:
         run: |
           result=$(echo "$test_response" | jq -r '.answer')
           threshold=6.00
-          if [ "$(echo "$result >= $threshold" | bc)" -eq 1 ]; then
+          if (( $(echo "$result >= $threshold" | bc -l) )); then
             echo "Test score is greater than or equal to $threshold. Workflow continues."
           else
             echo "Test score is below $threshold. Workflow will be terminated."
