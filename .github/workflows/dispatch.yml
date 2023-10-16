@@ -28,7 +28,7 @@ jobs:
             --payload "$payload" \
             --profile qa \
             --query 'Payload' \
-            --output json)
+            --output json /dev/stdout)
 
           echo "Lambda Response: $test_response"
 
