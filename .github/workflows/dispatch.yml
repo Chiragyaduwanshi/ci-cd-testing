@@ -35,8 +35,11 @@ jobs:
             --cli-binary-format raw-in-base64-out \
             --query 'Payload' \
             output.json
-          cat output.json
 
+      - name: Display test results
+        run: |
+          cat output.json
+        
       - name: Evaluate the Test Score
         run: |
           result=$(jq -r .answer output.json)
