@@ -26,7 +26,6 @@ jobs:
           test_response=$(aws lambda invoke \
             --function-name TEST_LAMBDA \
             --payload "$payload" \
-            --profile qa \
             --query 'Payload' \
             --output json /dev/stdout)
 
