@@ -2,10 +2,10 @@ name: Manual Workflow
 
 on:
   workflow_dispatch:
-    inputs:
-      branch_name:
-        description: 'Branch name to deploy'
-        required: true
+    # inputs:
+    #   branch_name:
+    #     description: 'Branch name to deploy'
+    #     required: true
 
 jobs:
   build_and_deploy:
@@ -15,8 +15,8 @@ jobs:
     
       - name: Checkout Code
         uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.inputs.branch_name }}
+        # with:
+        #   ref: ${{ github.event.inputs.branch_name }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
