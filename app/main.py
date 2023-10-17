@@ -5,16 +5,16 @@ def lambda_handler(event, context):
         b = event['b']
 
         # Perform the addition
-        result = a + b
+        result = a - b
 
         # Create a successful response dictionary
         response = {
             "statusCode": 200,
-            "body": f"subtraction: {b} - {a} = {result}"
+            "body": f"subtraction: {a} - {b}= {result}"
         }
 
         # Print the result for debugging (visible in CloudWatch Logs)
-        print('a + b =', result)
+        print('a - b =', result)
 
         return response
     except KeyError as e:
