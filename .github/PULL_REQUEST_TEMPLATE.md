@@ -1,6 +1,6 @@
 ## Testing Checklist
 
-- [ ] Verify that this change is significant and warrants testing.
+- [x] Verify that this change is significant and warrants testing.
 
 
 ## Description
