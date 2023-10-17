@@ -35,7 +35,7 @@ jobs:
 #            --image-uri ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
 
       - name: Set Pull Request Status Check
-        uses: actions/github-script@v7
+        uses: actions/github-script@latest
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -48,5 +48,6 @@ jobs:
               description: 'All checks passed',
               context: 'CI/Your-Status-Check'
             });
+      
       
 
