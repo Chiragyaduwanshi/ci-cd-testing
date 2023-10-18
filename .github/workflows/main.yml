@@ -10,7 +10,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
+      - name: Start testing
+        run: |
+          echo Testing initiated
+
 #      - name: Configure AWS credentials
 #        uses: aws-actions/configure-aws-credentials@v1
 #        with:
@@ -34,20 +38,7 @@ jobs:
 #            --function-name TEST_LAMBDA \
 #            --image-uri ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
 
-      - name: Set Pull Request Status Check
-        uses: actions/github-script@latest
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.repos.createStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: context.sha,
-              state: 'success',
-              target_url: 'URL_TO_YOUR_STATUS_PAGE',
-              description: 'All checks passed',
-              context: 'CI/Your-Status-Check'
-            });
+
       
       
 
