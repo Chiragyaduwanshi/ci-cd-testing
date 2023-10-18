@@ -1,0 +1,40 @@
+name: Manual Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      repos:
+        description: 'Comma-separated list of repositories (owner/repo) to check'
+        required: true
+
+jobs:
+  manual:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check Open Pull Requests
+      run: |
+        REPOS=(${{ inputs.repos }})
+        REQUIRED_APPROVALS=0
+        
+        for REPO in "${REPOS[@]}"; do
+          OWNER=$(echo $REPO | cut -d'/' -f1)
+          REPO_NAME=$(echo $REPO | cut -d'/' -f2)
+          
+          # List open pull requests in the master branch of the repo
+          OPEN_PULL_REQUESTS=$(curl -s "https://api.github.com/repos/$OWNER/$REPO_NAME/pulls?base=master&state=open")
+          
+          for PR in $(echo "$OPEN_PULL_REQUESTS" | jq -r '.[] | @base64'); do
+            PR_NUMBER=$(echo "$PR" | base64 --decode | jq -r '.number')
+            
+            # Get the number of approvals for the PR
+            APPROVALS=$(curl -s "https://api.github.com/repos/$OWNER/$REPO_NAME/pulls/$PR_NUMBER/reviews" | jq -r 'map(select(.state == "APPROVED")) | length')
+            
+            if [ $APPROVALS -ge $REQUIRED_APPROVALS ]; then
+              echo "Pull Request #$PR_NUMBER in $REPO has $APPROVALS approvals and is ready for merge."
+              # Send a signal, update a file, or perform any other action as needed.
+            fi
+          done
+        done
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
