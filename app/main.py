@@ -13,7 +13,7 @@ def lambda_handler(event, context):
             "answer": result
         }
 
-        print('a + b =', result)
+        print('a + b = ', result)
 
         return response
     except KeyError as e:
