@@ -3,9 +3,6 @@ on:
   pull_request:
     branches:
       - main
-    types:
-      - opened
-      - syncronize
 
 jobs:
   build_and_deploy:
