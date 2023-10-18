@@ -20,8 +20,9 @@ jobs:
         repos="${{ github.event.inputs.repository-names }}"
         for repo in $repos; do
           echo repo_name = $repo
-          # echo "Checking PRs in $repo"
-          # pull_requests=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/$repo/pulls?state=open")
+          echo "Checking PRs in $repo"
+          pull_requests=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/$repo/pulls?state=open")
+          echo Pull requests : $pull_requests
           # for pr in $(echo $pull_requests | jq -r '.[] | @base64'); do
           #   approvals=$(echo $pr | base64 --decode | jq '.reviews[] | select(.state == "APPROVED") | .user.login')
           #   pr_number=$(echo $pr | base64 --decode | jq -r '.number')
