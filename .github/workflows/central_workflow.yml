@@ -22,7 +22,7 @@ jobs:
           echo repo_name = $repo
           echo "Checking PRs in $repo"
           echo secret val = ${{ secrets.GITHUB_TOKEN }}
-          pull_requests=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/$repo/pulls?state=open")
+          pull_requests=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/ci-cd-testing/pulls?state=open")
           echo Pull requests : $pull_requests
           # for pr in $(echo $pull_requests | jq -r '.[] | @base64'); do
           #   approvals=$(echo $pr | base64 --decode | jq '.reviews[] | select(.state == "APPROVED") | .user.login')
