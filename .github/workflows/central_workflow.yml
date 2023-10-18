@@ -22,7 +22,7 @@ jobs:
           REPO_NAME=$(echo $REPO | cut -d'/' -f2)
           
           # List open pull requests in the master branch of the repo
-          OPEN_PULL_REQUESTS=$(curl -s "https://api.github.com/repos/$OWNER/$REPO_NAME/pulls?base=master&state=open")
+          OPEN_PULL_REQUESTS=$(curl -s "https://api.github.com/repos/$OWNER/$REPO_NAME/pulls?base=main&state=open")
           
           for PR in $(echo "$OPEN_PULL_REQUESTS" | jq -r '.[] | @base64'); do
             PR_NUMBER=$(echo "$PR" | base64 --decode | jq -r '.number')
