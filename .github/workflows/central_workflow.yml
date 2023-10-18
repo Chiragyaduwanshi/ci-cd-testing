@@ -21,6 +21,7 @@ jobs:
         for repo in $repos; do
           echo repo_name = $repo
           echo "Checking PRs in $repo"
+          echo secret val = ${{ secrets.GITHUB_TOKEN }}
           pull_requests=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/$repo/pulls?state=open")
           echo Pull requests : $pull_requests
           # for pr in $(echo $pull_requests | jq -r '.[] | @base64'); do
