@@ -4,15 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       branch_name:
-        description: 'Branch name to deploy'
+        description: 'Branch to be deployed'
         required: true
 
 jobs:
-  build_and_deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
@@ -23,32 +22,26 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Run Shell Script
-          run: |
-            chmod +x your_script.sh
-            ./your_script.sh
-          shell: bash
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1
-      
-      - name: Login to AWS ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-        
-      - name: Build and push Docker image
+      - name: Install and configure AWS CLI
         run: |
-          docker build -t dev-docker-image .
-          docker tag dev-docker-image:latest ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+          pip install --upgrade awscli
+          aws configure --profile dev set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws configure --profile dev set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws configure --profile dev set region ap-south-1
+          aws configure --profile dev set output json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          AWS_DEFAULT_REGION: ap-south-1
+          AWS_DEFAULT_OUTPUT: json
 
-      - name: Update AWS Lambda function
+      - name: Docker build and push
         run: |
-          aws lambda update-function-code \
-            --function-name TEST_LAMBDA \
-            --image-uri ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
-          
+          bash dockerize/docker_build_push.sh
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          AWS_DEFAULT_REGION: ap-south-1
+          AWS_DEFAULT_OUTPUT: json
+
