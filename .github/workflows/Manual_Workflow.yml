@@ -18,6 +18,11 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch_name }}
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
