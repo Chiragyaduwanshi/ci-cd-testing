@@ -28,6 +28,12 @@ jobs:
         with:
           python-version: 3.x
 
+      - name: Run Shell Script
+          run: |
+            chmod +x your_script.sh
+            ./your_script.sh
+          shell: bash
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
