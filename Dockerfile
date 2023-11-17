@@ -1,17 +1,19 @@
-FROM public.ecr.aws/lambda/python:3.9-arm64
+FROM public.ecr.aws/lambda/python:3.9
 
-# Install RustUP and maturin
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN yum install -y gcc
-ENV PATH="/root/.cargo/bin:${PATH}"
-RUN pip install maturin
-RUN pip install --upgrade pip
+ENV LIBREOFFICE_VERSION=7.6.2
+ENV LIBREOFFICE_PATH=/opt/libreoffice${LIBREOFFICE_VERSION}
 
-# Set the working directory in the container
-WORKDIR /var/task
+RUN yum install -y tar.x86_64 poppler-utils cairo cups libXinerama.x86_64 cups-libs dbus-glib gcc && \
+    yum remove -y openoffice* libreoffice* && \
+    curl -L -o LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz \
+    https://www.libreoffice.org/donate/dl/rpm-x86_64/7.6.2/en-US/LibreOffice_7.3.4_Linux_x86-64_rpm.tar.gz && \
+    tar zxvf LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz && \
+    yum localinstall -y ${LIBREOFFICE_PATH}/RPMS/*.rpm && \
+    rm -f LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz && \
+    yum clean all
 
-# Copy the Lambda function code from the 'app' directory into the image
-COPY app/ /var/task/
+ENV PATH="${LIBREOFFICE_PATH}/program:${PATH}"
 
-# Define the Lambda function's entry point
-CMD ["main.lambda_handler"]
+RUN yum remove -y openoffice* libreoffice* && \
+    rm -rf ${LIBREOFFICE_PATH} && \
+    yum
