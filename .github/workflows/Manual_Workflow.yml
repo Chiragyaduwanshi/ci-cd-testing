@@ -43,4 +43,3 @@ jobs:
           aws lambda update-function-code \
             --function-name TEST_LAMBDA \
             --image-uri ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
-
