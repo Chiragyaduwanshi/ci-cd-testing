@@ -39,7 +39,11 @@ jobs:
           file LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz  # Identify file type
           echo "Verifying checksum..."
           echo "${LIBREOFFICE_TAR_CHECKSUM}  LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz" | sha256sum -c -
-        
+      
+      - name: Inspect Archive
+        run: |
+          zcat LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz
+          
       - name: Build and push Docker image
         run: |
           docker build -t dev-docker-image .
