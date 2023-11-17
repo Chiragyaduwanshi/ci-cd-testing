@@ -26,11 +26,15 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Download LibreOffice layer
+      - name: Download LibreOffice
         run: |
-          mkdir -p libreoffice
-          curl -L -o libreoffice/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz https://www.libreoffice.org/donate/dl/rpm-x86_64/7.6.2/en-US/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz
-
+          LIBREOFFICE_VERSION=7.6.2
+          LIBREOFFICE_PATH=/opt/libreoffice${LIBREOFFICE_VERSION}
+          LIBREOFFICE_TAR_URL=https://www.libreoffice.org/donate/dl/rpm-x86_64/${LIBREOFFICE_VERSION}/en-US/LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz
+          LIBREOFFICE_TAR_CHECKSUM=920d61dd9ee4263d0960fca8b14e95d36602c589720903120cfd0c2e41916462  
+          
+          curl -L -o LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz ${LIBREOFFICE_TAR_URL} && \
+          echo "${LIBREOFFICE_TAR_CHECKSUM}  LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz" | sha256sum -c -
 
       - name: Build and push Docker image
         run: |
