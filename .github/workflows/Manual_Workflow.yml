@@ -33,7 +33,9 @@ jobs:
           LIBREOFFICE_TAR_URL=https://www.libreoffice.org/donate/dl/rpm-x86_64/7.6.2/en-US/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz
           LIBREOFFICE_TAR_CHECKSUM=920d61dd9ee4263d0960fca8b14e95d36602c589720903120cfd0c2e41916462  
           
-          curl -L -o LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz ${LIBREOFFICE_TAR_URL} && \
+          curl -L -o LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz ${LIBREOFFICE_TAR_URL}
+          COMPUTED_CHECKSUM=$(sha256sum LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz | awk '{print $1}')
+          echo "Computed Checksum: ${COMPUTED_CHECKSUM}"
           echo "${LIBREOFFICE_TAR_CHECKSUM}  LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz" | sha256sum -c -
 
       - name: Build and push Docker image
