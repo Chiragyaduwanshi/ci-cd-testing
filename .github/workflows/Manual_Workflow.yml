@@ -42,7 +42,7 @@ jobs:
       
       - name: Inspect Archive
         run: |
-          zcat LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz
+          zcat LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz
           
       - name: Build and push Docker image
         run: |
