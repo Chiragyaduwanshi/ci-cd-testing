@@ -12,34 +12,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          ref: ${{ github.event.inputs.branch_name }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Install and configure AWS CLI
+      - name: Download LibreOffice layer
         run: |
-          pip install --upgrade awscli
-          aws configure --profile dev set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-          aws configure --profile dev set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-          aws configure --profile dev set region ap-south-1
-          aws configure --profile dev set output json
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-          AWS_DEFAULT_REGION: ap-south-1
-          AWS_DEFAULT_OUTPUT: json
+          mkdir -p libreoffice
+          curl -L -o libreoffice/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz https://www.libreoffice.org/donate/dl/rpm-x86_64/7.6.2/en-US/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz
 
-      - name: Docker build and push
+
+      - name: Build and push Docker image
         run: |
-          bash dockerize/docker_build_push.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-          AWS_DEFAULT_REGION: ap-south-1
-          AWS_DEFAULT_OUTPUT: json
+          docker build -t dev-docker-image .
+          docker tag dev-docker-image:latest ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+
+      - name: Update AWS Lambda function
+        run: |
+          aws lambda update-function-code \
+            --function-name TEST_LAMBDA \
+            --image-uri ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
