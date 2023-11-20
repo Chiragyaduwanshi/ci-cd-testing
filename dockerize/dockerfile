@@ -6,9 +6,6 @@ ENV LIBREOFFICE_PATH=/opt/libreoffice${LIBREOFFICE_VERSION}
 RUN yum install -y tar.x86_64 poppler-utils cairo cups libXinerama.x86_64 cups-libs dbus-glib gcc && \
     yum remove -y openoffice* libreoffice*
 
-RUN curl -L -o LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz \
-    https://www.libreoffice.org/donate/dl/rpm-x86_64/${LIBREOFFICE_VERSION}/en-US/LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz
-
 RUN tar zxvf LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz && \
     yum localinstall -y ${LIBREOFFICE_PATH}/RPMS/*.rpm && \
     rm -f LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz && \
