@@ -28,7 +28,7 @@ jobs:
 
       - name: Download LibreOffice from S3
         run: |
-          aws s3 cp s3://your-bucket-name/LibreOffice_7.3.4_Linux_x86-64_rpm.tar.gz .
+          aws s3 cp s3://essential-downloads/LibreOffice_7.3.4_Linux_x86-64_rpm.tar.gz .
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
