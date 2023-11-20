@@ -25,30 +25,6 @@ jobs:
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Download and Verify LibreOffice
-        run: |
-          LIBREOFFICE_VERSION=7.6.2
-          LIBREOFFICE_PATH=/opt/libreoffice${LIBREOFFICE_VERSION}
-          LIBREOFFICE_TAR_URL=https://download.documentfoundation.org/libreoffice/stable/7.6.2/rpm/x86_64/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz
-          LIBREOFFICE_TAR_CHECKSUM=920d61dd9ee4263d0960fca8b14e95d36602c589720903120cfd0c2e41916462
-      
-          echo "Downloading file..."
-          curl -L -o LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz ${LIBREOFFICE_TAR_URL}
-          ls -l LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz  # Print file size
-          file LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz  # Identify file type
-          echo "Verifying checksum..."
-          echo "${LIBREOFFICE_TAR_CHECKSUM}  LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz" | sha256sum -c -
-
-          echo "Creating target directory..."
-          mkdir -p $LIBREOFFICE_PATH
-          
-          echo "Extracting and installing LibreOffice..."
-          tar zxvf LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz -C $LIBREOFFICE_PATH
-          
-          sudo apt-get update
-          sudo apt-get install -y libobasis7.6-core libobasis7.6-en-US libreoffice7.6-base
-          rm -f LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz 
           
       - name: Build and push Docker image
         run: |
