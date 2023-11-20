@@ -1,24 +1,20 @@
 FROM public.ecr.aws/lambda/python:3.9
 
-ENV LIBREOFFICE_VERSION=7.6.2
-ENV LIBREOFFICE_PATH=/opt/libreoffice${LIBREOFFICE_VERSION}
+# Install LibreOffice
+RUN yum install -y tar.x86_64
+RUN yum install -y poppler-utils
+COPY ./LibreOffice_7.3.4_Linux_x86-64_rpm.tar.gz .
+RUN yum remove -y openoffice* libreoffice*
+RUN tar zxvf LibreOffice_7.3.4_Linux_x86-64_rpm.tar.gz
+RUN yum localinstall -y LibreOffice_7.3.4.2_Linux_x86-64_rpm/RPMS/*.rpm
+RUN yum install -y cairo
+RUN yum install -y cups
+ENV PATH="$PATH:/opt/libreoffice7.3/program"
+RUN yum install -y libXinerama.x86_64 cups-libs dbus-glib
+RUN rm LibreOffice_7.3.4_Linux_x86-64_rpm.tar.gz
 
-# Install dependencies
-RUN yum install -y tar.x86_64 poppler-utils cairo cups libXinerama.x86_64 cups-libs dbus-glib gcc
+# Copy the Lambda function code from the 'app' directory into the image
+COPY app/ /var/task/
 
-# Download and verify LibreOffice
-WORKDIR /opt
-RUN curl -L -o LibreOffice.tar.gz https://download.documentfoundation.org/libreoffice/stable/7.6.2/rpm/x86_64/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz \
-    && ls -l \
-    && echo "Creating target directory..." \
-    && mkdir -p $LIBREOFFICE_PATH \
-    && echo "Extracting and installing LibreOffice..." \
-    && tar zxvf LibreOffice.tar.gz \
-    && yum localinstall -y LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm/RPMS/*.rpm \
-    && rm -rf LibreOffice*
-
-ENV PATH="${LIBREOFFICE_PATH}/program:${PATH}"
-
-# Clean up
-RUN yum remove -y tar.x86_64 gcc && \
-    yum clean all
+# Define the Lambda function's entry point
+CMD ["main.lambda_handler"]
