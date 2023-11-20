@@ -10,17 +10,14 @@ RUN yum install -y tar.x86_64 poppler-utils cairo cups libXinerama.x86_64 cups-l
 
 # Download and verify LibreOffice
 WORKDIR /opt
-RUN echo "Downloading file..."
-    && curl -L -o LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz ${LIBREOFFICE_TAR_URL}
-    && ls -l LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz  # Print file size
-    && file LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz  # Identify file type
-    && echo "Verifying checksum..."
-    && echo "${LIBREOFFICE_TAR_CHECKSUM}  LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz" | sha256sum -c -
-RUN tar -zxvf LibreOffice.tar.gz \
+RUN echo "Creating target directory..."
+    && mkdir -p $LIBREOFFICE_PATH    
+    && echo "Extracting and installing LibreOffice..."
+    && tar zxvf LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz -C $LIBREOFFICE_PATH
     && ls -l LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz \
     && if [ ! -s LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz ]; then exit 1; fi \
-    && yum localinstall -y LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm/RPMS/*.rpm \
-    && rm -rf LibreOffice*
+    && yum localinstall -y ${LIBREOFFICE_PATH}/RPMS/*.rpm || exit 1
+    && rm -f LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz   
 
 ENV PATH="${LIBREOFFICE_PATH}/program:${PATH}"
 
