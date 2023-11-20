@@ -39,6 +39,11 @@ jobs:
           file LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz  # Identify file type
           echo "Verifying checksum..."
           echo "${LIBREOFFICE_TAR_CHECKSUM}  LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz" | sha256sum -c -
+
+          echo "Extracting and installing LibreOffice..."
+          tar zxvf LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz -C $LIBREOFFICE_PATH
+          yum localinstall -y ${LIBREOFFICE_PATH}/RPMS/*.rpm || exit 1
+          rm -f LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz   
           
       - name: Build and push Docker image
         run: |
