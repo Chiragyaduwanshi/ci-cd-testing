@@ -45,8 +45,10 @@ jobs:
           
           echo "Extracting and installing LibreOffice..."
           tar zxvf LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz -C $LIBREOFFICE_PATH
-          yum localinstall -y ${LIBREOFFICE_PATH}/RPMS/*.rpm || exit 1
-          rm -f LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz   
+          
+          apt-get update
+          apt-get install -y libobasis7.6-core libobasis7.6-en-US libreoffice7.6-base
+          rm -f LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz 
           
       - name: Build and push Docker image
         run: |
