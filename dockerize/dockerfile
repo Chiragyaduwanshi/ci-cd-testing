@@ -3,11 +3,21 @@ FROM public.ecr.aws/lambda/python:3.9
 ENV LIBREOFFICE_VERSION=7.6.2
 ENV LIBREOFFICE_PATH=/opt/libreoffice${LIBREOFFICE_VERSION}
 
-RUN yum install -y tar.x86_64 poppler-utils cairo cups libXinerama.x86_64 cups-libs dbus-glib gcc && \
-    yum remove -y openoffice* libreoffice*
+# Install dependencies
+RUN yum install -y tar.x86_64 poppler-utils cairo cups libXinerama.x86_64 cups-libs dbus-glib gcc
+
+# Download and install LibreOffice
+WORKDIR /opt
+RUN curl -L -o LibreOffice.tar.gz https://download.documentfoundation.org/libreoffice/stable/7.6.2/rpm/x86_64/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz \
+    && curl -L -o LibreOffice.tar.gz.asc https://download.documentfoundation.org/libreoffice/stable/7.6.2/rpm/x86_64/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz.asc \
+    && gpg --keyserver keyserver.ubuntu.com --recv-keys C1BE5AD0CAFA4B876D9D0242C9B2DF4853602D3B \
+    && gpg --verify LibreOffice.tar.gz.asc LibreOffice.tar.gz \
+    && tar -zxvf LibreOffice.tar.gz \
+    && yum localinstall -y LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm/RPMS/*.rpm \
+    && rm -rf LibreOffice*
 
 ENV PATH="${LIBREOFFICE_PATH}/program:${PATH}"
 
-RUN yum remove -y openoffice* libreoffice* && \
-    rm -rf ${LIBREOFFICE_PATH} && \
-    yum
+# Clean up
+RUN yum remove -y tar.x86_64 gcc && \
+    yum clean all
