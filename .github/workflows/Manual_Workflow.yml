@@ -33,15 +33,18 @@ jobs:
       - name: Decrypt JSON file
         run: |
           openssl aes-256-cbc -d -in confidential.json.enc -out confidential.json -k ${{ secrets.PASSPHRASE }} -pbkdf2
-          
-      - name: Build and push Docker image
-        run: |
-          docker build -t dev-docker-image .
-          docker tag dev-docker-image:latest ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
 
-      - name: Update AWS Lambda function
-        run: |
-          aws lambda update-function-code \
-            --function-name TEST_LAMBDA \
-            --image-uri ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+      - name: Display decrypted content
+        run: cat confidential.json
+
+#      - name: Build and push Docker image
+#        run: |
+#          docker build -t dev-docker-image .
+#          docker tag dev-docker-image:latest ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+#          docker push ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
+#
+#      - name: Update AWS Lambda function
+#        run: |
+#          aws lambda update-function-code \
+#            --function-name TEST_LAMBDA \
+#            --image-uri ${{ steps.login-ecr.outputs.registry }}/cd-image-repo:latest
