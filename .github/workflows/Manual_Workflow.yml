@@ -29,6 +29,10 @@ jobs:
       - name: Download LibreOffice from S3
         run: |
           aws s3 cp s3://essential-downloads/LibreOffice_7.3.4_Linux_x86-64_rpm.tar.gz .
+
+      - name: Decrypt JSON file
+        run: |
+          openssl aes-256-cbc -d -in confidential.json.enc -out confidential.json -k ${{ secrets.PASSPHRASE }} -pbkdf2
           
       - name: Build and push Docker image
         run: |

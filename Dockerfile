@@ -15,6 +15,6 @@ RUN rm LibreOffice_7.3.4_Linux_x86-64_rpm.tar.gz
 
 # Copy the Lambda function code from the 'app' directory into the image
 COPY app/ /var/task/
-
+COPY confidential.json ./
 # Define the Lambda function's entry point
 CMD ["main.lambda_handler"]
