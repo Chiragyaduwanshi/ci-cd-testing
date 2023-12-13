@@ -1,4 +1,4 @@
-name: Manual Workflow
+fname: Manual Workflow
 
 on:
   workflow_dispatch:
@@ -22,16 +22,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
-      - name: Login to AWS ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
       - name: Download LibreOffice from S3
         run: |
           aws s3 cp s3://$S3_BUCKET/$LIBREOFFICE_FILE .
         env: 
           S3_BUCKET: essential-downloads
           LIBREOFFICE_FILE: LibreOffice_7.3.4_Linux_x86-64_rpm.tar.gz
+          
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Decrypt JSON file
         run: |
