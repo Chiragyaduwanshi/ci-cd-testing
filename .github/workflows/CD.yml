@@ -1,12 +1,9 @@
 name: CD Workflow
 
 on:
-  pull_request:
-    branches:
-      - main
-    types: 
-      - opened 
-      - synchronize        
+  status:
+    types:
+      - success    
 
 jobs:
   Deploy:
