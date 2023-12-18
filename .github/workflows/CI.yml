@@ -26,14 +26,3 @@ jobs:
     steps:
       - name: Run tests
         run: echo Running tests
-
-  Deploy:
-    runs-on: ubuntu-latest
-    needs: Testing
-    environment:
-      name: dev
-
-    steps:
-      - name: Deploy 
-        run: echo Proceeding with deployment
-
