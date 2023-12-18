@@ -1,8 +1,8 @@
 name: CD Workflow
 
 on:
-  issue_comment:
-    types: [created, deleted]
+  pull_request:
+    types: [opened, edited, synchronize]
 
 jobs:
   check_commit_status:
