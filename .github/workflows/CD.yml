@@ -1,9 +1,8 @@
 name: CD Workflow
 
 on:
-  pull_request:
-    types:
-      - synchronize  
+  issue_comment:
+    types: [created, deleted]
 
 jobs:
   check_commit_status:
@@ -11,6 +10,7 @@ jobs:
 
     steps:
       - name: Check Commit Status
+        if: ${{ github.event.issue.pull_request }}
         run: |
           # Extract the pull request number from the GitHub event payload
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
