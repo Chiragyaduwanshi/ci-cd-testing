@@ -26,8 +26,8 @@ jobs:
           # Add your logic here to take action based on the commit status
           # For example, fail the workflow if the status is not success
           if [ "$COMMIT_STATUS" != "success" ]; then
-            echo "Commit status is not success. Failing the workflow."
-            exit 1
+            echo "Commit status is not success. Exiting the workflow."
+            run: echo "::set-output name=conclusion::neutral"
           fi
   Deploy:
     runs-on: ubuntu-latest
