@@ -1,9 +1,9 @@
 name: CD Workflow
 
 on:
-  pull_request_review_comment:
-    branches:
-      - main
+  pull_request_review:
+    types:
+      - submitted
 
 jobs:
   check_commit_status:
