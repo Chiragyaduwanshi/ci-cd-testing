@@ -10,7 +10,7 @@ jobs:
       - name: Check Commit Status
         run: |
           # Extract the pull request number from the GitHub event payload
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          PR_NUMBER=$(jq --raw-output .issue.pull_request.number "$GITHUB_EVENT_PATH")
 
           # Get the SHA of the latest commit in the pull request
           COMMIT_SHA=$(curl -sSL "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" | jq --raw-output .head.sha)
