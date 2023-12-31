@@ -1,0 +1,38 @@
+name: CD trigger Workflow
+
+on: issue_comment
+
+jobs:
+  check_commit_status:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Commit Status
+        run: |
+          # Extract the pull request number from the GitHub event payload
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+
+          # Get the SHA of the latest commit in the pull request
+          COMMIT_SHA=$(curl -sSL "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" | jq --raw-output .head.sha)
+
+          # Check the commit status
+          COMMIT_STATUS=$(curl -sSL "https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${COMMIT_SHA}/status" | jq --raw-output .state)
+
+          # Print the commit status
+          echo "Commit Status: $COMMIT_STATUS"
+
+          # Add your logic here to take action based on the commit status
+          # For example, fail the workflow if the status is not success
+          if [ "$COMMIT_STATUS" != "success" ]; then
+            echo "Commit status is not success. Exiting the workflow."
+            run: echo "::set-output name=conclusion::neutral"
+          fi
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: check_commit_status  
+    environment:
+      name: dev
+
+    steps:
+      - name: Deploy 
+        run: echo Proceeding with deployment ...
