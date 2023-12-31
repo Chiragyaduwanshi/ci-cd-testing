@@ -4,6 +4,8 @@ on:
   status:
     types:
       - success
+      - failure
+      - pending
 
 jobs:
   check_commit_status:
