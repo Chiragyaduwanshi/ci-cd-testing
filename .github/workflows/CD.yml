@@ -34,7 +34,7 @@ jobs:
           # For example, fail the workflow if the status is not success
           if [ "$COMMIT_STATUS" != "success" ]; then
             echo "Commit status is not success. Exiting the workflow."
-            echo "::set-output name=conclusion::neutral"
+            exit 1
           fi
 
   Deploy:
