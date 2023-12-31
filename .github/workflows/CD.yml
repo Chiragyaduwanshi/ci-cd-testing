@@ -1,13 +1,9 @@
 name: CD Workflow
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - closed
-      - edited
+  pull_request_review_comment:
+    branches:
+      - main
 
 jobs:
   check_commit_status:
