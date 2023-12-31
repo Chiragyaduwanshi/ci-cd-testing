@@ -7,6 +7,7 @@ on:
       - synchronize
       - reopened
       - closed
+      - edited
 
 jobs:
   check_commit_status:
