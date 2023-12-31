@@ -1,9 +1,9 @@
 name: CD Workflow
 
 on:
-  check_run:
+  status:
     types:
-      - completed
+      - success
 
 jobs:
   check_commit_status:
