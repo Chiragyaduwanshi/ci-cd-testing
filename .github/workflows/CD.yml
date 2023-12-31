@@ -1,8 +1,9 @@
 name: CD Workflow
 
 on:
-  issue_comment:
-    types: [created]
+  check_run:
+    types:
+      - completed
 
 jobs:
   check_commit_status:
