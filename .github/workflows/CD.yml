@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check Event Payload
+        run: cat $GITHUB_EVENT_PATH
+        
       - name: Check Commit Status
         run: |
           # Extract the pull request number from the GitHub event payload
