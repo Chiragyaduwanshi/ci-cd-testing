@@ -1,11 +1,6 @@
 name: CD Workflow
 
-on:
-  status:
-    types:
-      - success
-      - failure
-      - pending
+on: issue_comment
 
 jobs:
   check_commit_status:
